@@ -1,6 +1,11 @@
 from flask import Flask
 from threading import Thread
 
+""" this is the web app the program runs on
+
+the app is pinged every half hour to prevent timeout
+"""
+
 app = Flask('')
 
 @app.route('/')
