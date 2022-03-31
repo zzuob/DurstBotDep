@@ -6,8 +6,11 @@ We partake in a moderate amount of tomfoolery.
 
 ## Prerequisites
 python = "^3.8"
+
 flask = "^2.0.1"
+
 discord.py = "^1.7.3"
+
 PyNaCl = "^1.4.0"
 
 ## Getting Started
