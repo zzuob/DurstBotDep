@@ -1,5 +1,6 @@
 import os
 import discord
+import re
 import pandas as pd
 from discord.ext import commands
 from datetime import datetime, timedelta
@@ -16,7 +17,6 @@ class GreetReply(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.greetings = ['hi', 'hello', 'hewwo', 'henlo', 'hey', 'heya']
-        self.cursed_greetings = {0: 'ou0;', 1: 'wv'}
         self.cursed_reply = {
             'o': 'u',
             '0': 'u',
@@ -90,35 +90,21 @@ class GreetReply(commands.Cog):
         txt = msg.content
         if msg.author == self.bot.user:  # don't read own messages
             return
-        elif msg.content.startswith(
-                '%'): #TODO change this to @ing durstbot
-            txt = txt.replace('%', '')
-            for i in range(len(txt)):
-                if not txt[i] == ' ':
-                    txt = txt[i:]
-                    break
-            # I showed you my Fred Durst please respond
-            if txt.lower() in self.greetings:
-                # send user a random meme if a greeting is indetified
-                pic = self.cycle_pics()
-                await msg.channel.send(file=pic)
-            else: # doesnt need to be a % -> (o|u|0)\s*(w|v)\s*(o|u|0)
-                """ check for a valid uwu
-              if found, will close all open eyes and vice versa and then
-              reply with the corresponding owo
-              """
-                txt_strip = txt.replace(' ', '').lower()
-                weeb = True
-                for c in range(len(txt_strip)):
-                    # check message for  an eye, a mouth and an eye in order
-                    # cannot have multiple mouths etc.
-                    if txt_strip[c] not in self.cursed_greetings[c % 2]:
-                        # owo -> 010
-                        weeb = False
-                        break
-                if weeb:
-                    reply = self.uwu(txt)
-                    await msg.channel.send(reply)
+        elif msg.mentions is not None: 
+            if self.bot.user in msg.mentions:
+                if txt.lower() in self.greetings:
+                    # send user a random meme if a greeting is indetified
+                    pic = self.cycle_pics()
+                    await msg.channel.send(file=pic)
+                else: 
+                    """ check for a valid uwu
+                    if found, will close all open eyes and vice versa and then
+                    reply with the corresponding owo
+                    """
+                    txt = txt.split('>')[1]
+                    if re.search(r'\s*(o|u|0)\s*(w|v)\s*(o|u|0)', txt, re.IGNORECASE):
+                        reply = self.uwu(txt)
+                        await msg.channel.send(reply)
         elif datetime.now() > self.quoted_cooldown and len(txt) > 10:
             reply = self.get_quote(txt)
             if reply is not None:
