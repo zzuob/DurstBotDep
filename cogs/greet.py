@@ -31,7 +31,6 @@ class GreetReply(commands.Cog):
                 self.pics.add(item)
         print(f'Loaded {len(self.pics)} pictures of Fred Durst.')
         self.recent_pics = set()
-        self._last_member = None
         self.lyrics = pd.read_csv("static/lyrics.csv")
         self.quoted_cooldown = datetime.now()
         print(f'Loaded a selection of {len(self.lyrics)} Limp Bizkit songs.')
@@ -92,7 +91,7 @@ class GreetReply(commands.Cog):
         if msg.author == self.bot.user:  # don't read own messages
             return
         elif msg.content.startswith(
-                '%'):  #TODO change this to be a class variable
+                '%'): #TODO change this to @ing durstbot
             txt = txt.replace('%', '')
             for i in range(len(txt)):
                 if not txt[i] == ' ':
@@ -103,7 +102,7 @@ class GreetReply(commands.Cog):
                 # send user a random meme if a greeting is indetified
                 pic = self.cycle_pics()
                 await msg.channel.send(file=pic)
-            else:
+            else: # doesnt need to be a % -> (o|u|0)\s*(w|v)\s*(o|u|0)
                 """ check for a valid uwu
               if found, will close all open eyes and vice versa and then
               reply with the corresponding owo
