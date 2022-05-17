@@ -1,8 +1,4 @@
-from random import randint
-from datetime import datetime, timedelta
-from collections import OrderedDict
 from discord.ext import commands
-from discord.utils import get
 
 
 class Helper(commands.Cog):
@@ -19,17 +15,8 @@ class Helper(commands.Cog):
     @commands.command(pass_context=True)
     async def help(self, ctx, *args):
         await ctx.send(
-            '`%vibe check` --> I will check your vibes\n`%uwu` --> guess what\n`%hello` --> ??\n`%version` --> Check current version of DurstBot'
-        )
-
-    @commands.command(pass_context=True)
-    async def version(self, ctx, *args):
-        await ctx.send(self.replies[randint(0, len(self.replies) - 1)])
-
-    @commands.command(pass_context=True)
-    async def changelog(self, ctx, *args):
-        await ctx.send('10/05/22 - Added an incredibly annoying function')
-    
+            '@me for more nonsense \n`%vibe check` --> I will check your vibes %version` --> Check current version of DurstBot'
+        )   
 
 
 def setup(bot): 
