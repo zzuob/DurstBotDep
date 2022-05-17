@@ -5,9 +5,13 @@ import discord
 from stayup import keepRollin
 
 bot = commands.Bot(command_prefix='%', help_command=None)
-extensions = []
+COGS = []
 for item in os.listdir('cogs'):
-    extensions.append(item)
+    if item.startswith('_'):
+        pass
+    else:
+        ext = 'cogs.' + item.split('.')[0]
+        COGS.append(ext)
 
 
 @bot.event
@@ -35,13 +39,9 @@ async def reload(ctx, extension):
 
 
 if __name__ == "__main__":
-    for item in os.listdir('cogs'):
-        if item.startswith('_'):
-            pass
-        else:
-            ext = 'cogs.' + item.split('.')[0]
-            bot.load_extension(ext)
-            print(f'Loaded {ext}')
+    for ext in COGS:
+        bot.load_extension(ext)
+        print(f'Loaded {ext}')
     keepRollin()
     bot.run(
         os.getenv('TOKEN'))  #yeah i'm not putting the API key in a public repo

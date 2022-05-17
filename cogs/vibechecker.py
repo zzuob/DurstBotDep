@@ -9,8 +9,8 @@ class VibeChecker(commands.Cog):
     def __init__(self, bot, title='Vibe Master'):
         self.bot = bot
         self.recent = OrderedDict()  # dict of all members on cooldown
-        self.title = title
-        self.role = None
+        self.title = title # name of role
+        self.role = None # this is empty until bot gets context from a cmd
 
     @commands.command(pass_context=True)
     async def vibe(self, ctx, *args):
