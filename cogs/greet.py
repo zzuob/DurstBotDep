@@ -17,6 +17,7 @@ class GreetReply(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.greetings = ['hi', 'hello', 'hewwo', 'henlo', 'hey', 'heya']
+        #TODO add static file to handle greetings
         self.cursed_reply = {
             'o': 'u',
             '0': 'u',
@@ -92,7 +93,11 @@ class GreetReply(commands.Cog):
             return
         elif msg.mentions is not None: 
             if self.bot.user in msg.mentions:
-                if txt.lower() in self.greetings:
+                txt = txt.split('>')[1]
+                match = process.extractOne(txt,
+                                       self.greetings,
+                                       score_cutoff=90)
+                if match is not None:
                     # send user a random meme if a greeting is indetified
                     pic = self.cycle_pics()
                     await msg.channel.send(file=pic)
@@ -101,7 +106,6 @@ class GreetReply(commands.Cog):
                     if found, will close all open eyes and vice versa and then
                     reply with the corresponding owo
                     """
-                    txt = txt.split('>')[1]
                     if re.search(r'\s*(o|u|0)\s*(w|v)\s*(o|u|0)', txt, re.IGNORECASE):
                         reply = self.uwu(txt)
                         await msg.channel.send(reply)
