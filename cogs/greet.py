@@ -16,8 +16,11 @@ class GreetReply(commands.Cog):
   """
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.greetings = ['hi', 'hello', 'hewwo', 'henlo', 'hey', 'heya']
-        #TODO add static file to handle greetings
+        greetings = []
+        with open('static/greetings.txt') as f:
+            for line in f.readlines():
+                greetings = greetings + line.split(',')
+        self.greetings = greetings
         self.cursed_reply = {
             'o': 'u',
             '0': 'u',
@@ -91,33 +94,36 @@ class GreetReply(commands.Cog):
         txt = msg.content
         if msg.author == self.bot.user:  # don't read own messages
             return
-        elif msg.mentions is not None: 
+        elif msg.mentions is not None:
             if self.bot.user in msg.mentions:
                 txt = txt.split('>')[1]
                 match = process.extractOne(txt,
-                                       self.greetings,
-                                       score_cutoff=90)
+                                           self.greetings,
+                                           score_cutoff=90)
                 if match is not None:
                     # send user a random meme if a greeting is indetified
                     pic = self.cycle_pics()
                     await msg.channel.send(file=pic)
-                else: 
+                else:
                     """ check for a valid uwu
                     if found, will close all open eyes and vice versa and then
                     reply with the corresponding owo
                     """
-                    if re.search(r'\s*(o|u|0)\s*(w|v)\s*(o|u|0)', txt, re.IGNORECASE):
+                    if re.search(r'\s*(o|u|0)\s*(w|v)\s*(o|u|0)', txt,
+                                 re.IGNORECASE):
                         reply = self.uwu(txt)
                         await msg.channel.send(reply)
         elif datetime.now() > self.quoted_cooldown and len(txt) > 10:
             reply = self.get_quote(txt)
             if reply is not None:
                 self.quoted_cooldown = datetime.now() + timedelta(
-                        minutes=randint(2, 20))
+                    minutes=randint(2, 20))
                 await msg.channel.send(reply, reference=msg)
 
-def setup(bot): 
-  bot.add_cog(GreetReply(bot))
 
-def teardown(bot): 
-  bot.remove_cog(GreetReply(bot))
+def setup(bot):
+    bot.add_cog(GreetReply(bot))
+
+
+def teardown(bot):
+    bot.remove_cog(GreetReply(bot))
