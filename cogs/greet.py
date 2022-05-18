@@ -14,7 +14,7 @@ class GreetReply(commands.Cog):
   sends user a meme if they greet the bot
   also responds to uwus
   """
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.greetings = ['hi', 'hello', 'hewwo', 'henlo', 'hey', 'heya']
         #TODO add static file to handle greetings
@@ -36,7 +36,7 @@ class GreetReply(commands.Cog):
         self.quoted_cooldown = datetime.now()
         print(f'Loaded a selection of {len(self.lyrics)} Limp Bizkit songs.')
 
-    def uwu(self, txt):
+    def uwu(self, txt: str):
         #TODO explain yourself
         reply = ''
         for c in range(len(txt)):
@@ -60,7 +60,7 @@ class GreetReply(commands.Cog):
                         break
         return reply
 
-    def cycle_pics(self):
+    def cycle_pics(self) -> discord.File:
         """will cycle through pics at random and reset once all pics
         have been sent once"""
         if len(self.pics) == 0:
@@ -71,7 +71,7 @@ class GreetReply(commands.Cog):
         pic = discord.File(f'static/memes/{item}')
         return pic
 
-    def get_quote(self, txt):
+    def get_quote(self, txt: str):
         reply = None
         for i in range(1, 4):
             match = process.extractOne(txt,

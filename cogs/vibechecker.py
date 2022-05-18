@@ -1,3 +1,4 @@
+from typing import Optional
 from random import randint
 from datetime import datetime, timedelta
 from collections import OrderedDict
@@ -6,7 +7,7 @@ from discord.utils import get, find
 
 
 class VibeChecker(commands.Cog):
-    def __init__(self, bot, title='Vibe Master'):
+    def __init__(self, bot: commands.Bot, title: Optional[str]='Vibe Master'):
         self.bot = bot
         self.recent = OrderedDict()  # dict of all members on cooldown
         self.title = title # name of role
