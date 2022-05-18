@@ -83,9 +83,10 @@ class GreetReply(commands.Cog):
                                        scorer=fuzz.partial_ratio)
             if match is not None:
                 lyric = match[0]
-                song = self.lyrics.iloc[match[2]]['Song']
-                album = self.lyrics.iloc[match[2]]['Album']
-                reply = f'{lyric}\n - {song}, {album}'
+                title = self.lyrics.iloc[match[2]]['Song']+" - "+self.lyrics.iloc[match[2]]['Album']
+                reply = discord.Embed(title=title,
+                                      description=lyric)
+                reply.set_footer(text='LIMP BIZKIT')
                 break
         return reply
 
@@ -118,7 +119,7 @@ class GreetReply(commands.Cog):
             if reply is not None:
                 self.quoted_cooldown = datetime.now() + timedelta(
                     minutes=randint(2, 20))
-                await msg.channel.send(reply, reference=msg)
+                await msg.channel.send(embed=reply, reference=msg)
 
 
 def setup(bot):
