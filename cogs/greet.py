@@ -92,12 +92,12 @@ class GreetReply(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, msg):
-        txt = msg.content
+        txt = msg.clean_content
         if msg.author == self.bot.user:  # don't read own messages
             return
         elif msg.mentions is not None:
             if self.bot.user in msg.mentions:
-                txt = txt.split('>')[1]
+                txt = txt.split(' ', 1)[1]
                 match = process.extractOne(txt,
                                            self.greetings,
                                            score_cutoff=90)

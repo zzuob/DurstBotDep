@@ -7,12 +7,16 @@ from discord.utils import get, find
 
 
 class VibeChecker(commands.Cog):
-    def __init__(self, bot: commands.Bot, title: Optional[str]='Vibe Master'):
+    def __init__(self, 
+                 bot: commands.Bot, 
+                 title: Optional[str]='Vibe Master',
+                 debug_role: Optional[str]='Committee'):
         self.bot = bot
         self.recent = OrderedDict()  # dict of all members on cooldown
         self.title = title # name of role
         self.role = None # this is empty until bot gets context from a cmd
-
+        self.debug_title = debug_role
+  
     @commands.command(pass_context=True)
     async def vibe(self, ctx, *args):
         if self.role is None:  # setup vibe check passed role
@@ -23,17 +27,35 @@ class VibeChecker(commands.Cog):
         last_winner = find(lambda m: m.roles.count(self.role) == 1,
                                        ctx.guild.members)
         execute = False
+        v_pass = False
         reply = None
         # validate second word
         if len(args) == 0:
             reply = 'Vibe what?'
+        elif args[0].lower() == 'debug':
+            # debug functions
+            if ctx.author.top_role.name == self.debug_title and len(args) >= 2: #FIXME
+                if args[1].lower() == 'clear':
+                    # clear all vibe masters
+                    winners = filter(lambda m: m.roles.count(self.role) == 1,
+                                         ctx.guild.members)
+                    for user in winners:
+                        await user.remove_roles(self.role)
+                    reply = f'[DEBUG] {self.role.name}s cleared.'
+                elif args[1].lower() == 'pass':
+                    # force vibes to pass
+                    execute = True
+                    v_pass = True
+                    check = True
+            else:
+                reply == 'You have insufficent permissions to call debug.'
         elif args[0].lower() == 'check':
             execute = True
         elif args[0].lower() == 'master':
             if last_winner is None:
-              reply = 'No one is the vibe master rn.'
+              reply = f'No one is the {self.role.name} rn.'
             else:
-              reply = f'{last_winner.name} is currently the vibe master.'
+              reply = f'{last_winner.name} is currently the {self.role.name}.'
         else:
             reply = 'Vibe what?'
         if execute:
@@ -59,11 +81,16 @@ class VibeChecker(commands.Cog):
                     check = True
             # check vibes
             if check:
-                if randint(1,4) == 1:  #TODO this sucks
+                if v_pass:
+                  reply = '[DEBUG] Vibe check passed?'
+                elif randint(1,4) == 1:
                     if last_winner is not None:
-                        last_winner.remove_roles(self.role)
-                    await member.add_roles(self.role)
-                    reply = f'Vibe check passed. {member.name} is now the Vibe Master.'
+                        await last_winner.remove_roles(self.role)
+                    if ctx.guild.owner.id == member.id:
+                        reply = f'Vibe check passed but server owners are banned from being the {self.role.name}'
+                    else:  
+                        await member.add_roles(self.role)
+                        reply = f'Vibe check passed. {member.name} is now the {self.role.name}.'
                 else:
                     reply = 'Vibe check failed.'
         # send reply
