@@ -2,6 +2,7 @@ from typing import Optional
 from discord.ext import commands
 from discord import Embed
 
+# WIP :))
 
 class Help(commands.HelpCommand):
     def get_command_signature(self, command):

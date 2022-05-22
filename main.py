@@ -29,7 +29,7 @@ async def on_command_error(ctx, error):
 
 
 @bot.command()
-@commands.is_owner()
+@commands.has_permissions(administrator = True)
 async def reload(ctx, extension):
     bot.reload_extension(f"cogs.{extension}")
     embed = discord.Embed(title='Reload',
@@ -44,4 +44,4 @@ if __name__ == "__main__":
         print(f'Loaded {ext}')
     keepRollin()
     bot.run(
-        os.getenv('TOKEN'))  #yeah i'm not putting the API key in a public repo
+        os.getenv('TOKEN'))  

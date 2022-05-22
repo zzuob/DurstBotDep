@@ -7,16 +7,15 @@ from discord.utils import get, find
 
 
 class VibeChecker(commands.Cog):
-    def __init__(self, 
-                 bot: commands.Bot, 
-                 title: Optional[str]='Vibe Master',
-                 debug_role: Optional[str]='Committee'):
+    #TODO SEPARATE. THE COMMANDS. PLEASE.
+    def __init__(self,
+                 bot: commands.Bot,
+                 title: Optional[str] = 'Vibe Master'):
         self.bot = bot
         self.recent = OrderedDict()  # dict of all members on cooldown
-        self.title = title # name of role
-        self.role = None # this is empty until bot gets context from a cmd
-        self.debug_title = debug_role
-  
+        self.title = title  # name of role
+        self.role = None  # this is empty until bot gets context from a cmd
+
     @commands.command(pass_context=True)
     async def vibe(self, ctx, *args):
         if self.role is None:  # setup vibe check passed role
@@ -25,20 +24,23 @@ class VibeChecker(commands.Cog):
                 role = await ctx.guild.create_role(name=self.title)
             self.role = role
         last_winner = find(lambda m: m.roles.count(self.role) == 1,
-                                       ctx.guild.members)
+                           ctx.guild.members)
         execute = False
         v_pass = False
         reply = None
+        member = ctx.message.author
         # validate second word
         if len(args) == 0:
             reply = 'Vibe what?'
         elif args[0].lower() == 'debug':
             # debug functions
-            if ctx.author.top_role.name == self.debug_title and len(args) >= 2: #FIXME
+            if not member.guild_permissions.administrator:
+                reply == 'You have insufficent permissions to call debug.'
+            elif len(args) >= 2:  #FIXME
                 if args[1].lower() == 'clear':
                     # clear all vibe masters
                     winners = filter(lambda m: m.roles.count(self.role) == 1,
-                                         ctx.guild.members)
+                                     ctx.guild.members)
                     for user in winners:
                         await user.remove_roles(self.role)
                     reply = f'[DEBUG] {self.role.name}s cleared.'
@@ -48,18 +50,17 @@ class VibeChecker(commands.Cog):
                     v_pass = True
                     check = True
             else:
-                reply == 'You have insufficent permissions to call debug.'
+                reply == 'Include a debug command pliz.'
         elif args[0].lower() == 'check':
             execute = True
         elif args[0].lower() == 'master':
             if last_winner is None:
-              reply = f'No one is the {self.role.name} rn.'
+                reply = f'No one is the {self.role.name} rn.'
             else:
-              reply = f'{last_winner.name} is currently the {self.role.name}.'
+                reply = f'{last_winner.name} is currently the {self.role.name}.'
         else:
             reply = 'Vibe what?'
         if execute:
-            member = ctx.message.author
             check = False
             # see if user is elgilible for a vibe check
             if self.role in member.roles:
@@ -81,14 +82,13 @@ class VibeChecker(commands.Cog):
                     check = True
             # check vibes
             if check:
-                if v_pass:
-                  reply = '[DEBUG] Vibe check passed?'
-                elif randint(1,4) == 1:
+                if randint(1, 4) == 1 or v_pass:
                     if last_winner is not None:
                         await last_winner.remove_roles(self.role)
                     if ctx.guild.owner.id == member.id:
+                        # bot cant remove roles from the owner kekw
                         reply = f'Vibe check passed but server owners are banned from being the {self.role.name}'
-                    else:  
+                    else:
                         await member.add_roles(self.role)
                         reply = f'Vibe check passed. {member.name} is now the {self.role.name}.'
                 else:

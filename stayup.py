@@ -3,7 +3,7 @@ from threading import Thread
 
 """ this is the web app the program runs on
 
-the app is pinged every half hour to prevent timeout
+the app is pinged every 15 mins to prevent timeout
 
 it still goes offline every couple weeks
 """
